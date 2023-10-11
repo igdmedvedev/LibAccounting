@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Readers List</title>
+    <link href="/styles/css/bootstrap.css" rel="stylesheet">
+    <link href="/styles/css/styles.css" rel="stylesheet">
+</head>
+<body>
+<ul class="container justify-content-center">
+    <div class="col justify-content-center list-group list-group-horizontal">
+        <a class="col-sm-2 list-group btn btn-primary mx-3 br-bottom-radius" th:href="@{/people/new}">New reader</a>
+        <a class="col-sm-2 list-group btn btn-primary mx-4 br-bottom-radius" th:href="@{/books}">Books</a>
+        <a class="col-sm-2 list-group btn btn-primary mx-3 br-bottom-radius" th:href="@{/books/new}">New book</a>
+    </div>
+    <div class="col justify-content-center list-group list-group-horizontal mt-4" th:each="person : ${people}">
+        <a class="col-sm-6 list-group-item" th:href="@{/people/{id}(id=${person.getId()})}">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1" th:text="${person.getFullName()}"></h5>
+                <small th:text="${person.getFormattedBirthday()}"></small>
+            </div>
+            <p class="mb-1" th:text="${person.getEmail()}"></p>
+        </a>
+        <form class="list-group" th:method="DELETE" th:action="@{/people/{id}(id=${person.getId()})}">
+            <a class="list-group-item btn br-top-right-radius btn-outline-secondary" th:href="@{/people/{id}/edit(id=${person.getId()})}">Edit</a>
+            <button class="list-group-item btn br-bottom-right-radius btn-outline-danger" type="submit">Delete</button>
+        </form>
+    </div>
+</ul>
+
+</body>
+<script>
+</script>
+</html>

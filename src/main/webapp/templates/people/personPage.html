@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${person.getFullName()}"></title>
+    <link href="/styles/css/bootstrap.css" rel="stylesheet">
+</head>
+<body>
+<div class="container col-md-5 align-self-center" th:object="${person}">
+    <div class="form-group my-3">
+        <label for="first-name">First Name</label>
+        <input type="text" class="form-control" id="first-name" th:field="*{firstName}" disabled>
+    </div>
+
+    <div class="form-group my-3">
+        <label for="middle-name">Middle Name</label>
+        <input type="text" class="form-control" id="middle-name" th:field="*{middleName}" disabled>
+    </div>
+
+    <div class="form-group my-3">
+        <label for="last-name">Last Name</label>
+        <input type="text" class="form-control" id="last-name" th:field="*{lastName}" disabled>
+    </div>
+
+    <div class="form-group my-3">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" id="email" th:field="*{email}" disabled>
+    </div>
+
+    <div class="form-group my-3">
+        <label for="birthday">Birthday</label>
+        <input type="text" class="form-control" id="birthday" th:value="${person.getFormattedBirthday()}" disabled>
+    </div>
+
+    <div class="form-group my-3">
+        <label for="gender">Gender</label>
+        <input type="text" class="form-control" id="gender" th:value="${person.getGenderText()}" disabled>
+    </div>
+
+    <a type="submit" class="btn btn-primary" th:href="@{/people/{id}/books(id=${person.getId()})}">Reader's book list</a>
+    <a type="submit" class="btn btn-secondary" th:href="@{/people}">List of readers</a>
+</div>
+</body>
+</html>

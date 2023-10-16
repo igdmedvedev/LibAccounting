@@ -4,13 +4,12 @@ import com.springtest.crudrest.dao.BooksDao;
 import com.springtest.crudrest.dao.PeopleDao;
 import com.springtest.crudrest.models.Book;
 import com.springtest.crudrest.util.BooksValidator;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/books")
@@ -41,7 +40,7 @@ public class BooksController {
             return "notFoundPage";
         }
         model.addAttribute("book", book);
-        model.addAttribute("personName", book.getPersonId() != null ? peopleDao.loadByPk(book.getPersonId()).getFullName() : null);
+        model.addAttribute("personName", book.getPerson() != null ? peopleDao.loadByPk(book.getPerson().getId()).getFullName() : null);
         return "books/bookPage";
     }
 
@@ -76,8 +75,8 @@ public class BooksController {
         if (bindingResult.hasErrors()) {
             return "books/bookForm";
         }
-        book.setPersonId(personId);
-        booksDao.update(book);
+        book.setPerson(peopleDao.loadByPk(personId));
+        booksDao.createOrUpdate(book);
         return "redirect:/books/" + book.getId(); //нужно избавиться от конкатинации
     }
 
@@ -88,8 +87,8 @@ public class BooksController {
         if (bindingResult.hasErrors()) {
             return "books/bookForm";
         }
-        book.setPersonId(personId);
-        booksDao.create(book);
+        book.setPerson(peopleDao.loadByPk(personId));
+        booksDao.createOrUpdate(book);
         return "redirect:/books/";
     }
 }

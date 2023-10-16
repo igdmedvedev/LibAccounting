@@ -1,52 +1,66 @@
 package com.springtest.crudrest.dao;
 
 import com.springtest.crudrest.models.Person;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class PeopleDao {
-    private final JdbcTemplate jdbcTemplate;
+    private final SessionFactory sessionFactory;
     @Autowired
-    public PeopleDao(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public PeopleDao(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
+    @Transactional(readOnly = true)
     public List<Person> collectPeople() {
-        return jdbcTemplate.query("SELECT * FROM People", new BeanPropertyRowMapper<>(Person.class));
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery("from Person", Person.class).getResultList();
     }
 
+    @Transactional(readOnly = true)
     public Person loadByPk(Integer id) {
-        List<Person> person = jdbcTemplate.query("SELECT * FROM People WHERE id = ?", new Object[]{id}, new BeanPropertyRowMapper<>(Person.class));
+        Session session = sessionFactory.getCurrentSession();
+        return session.get(Person.class, id);
+    }
+
+    @Transactional(readOnly = true)
+    public Person loadByPk(Integer id, boolean loadBooks) {
+        Session session = sessionFactory.getCurrentSession();
+        Person person = session.get(Person.class, id);
+        if (loadBooks) {
+            Hibernate.initialize(person.getBooks());
+        }
+        return person;
+    }
+
+    @Transactional(readOnly = true)
+    public Person loadByEmail(String email) {
+        Session session = sessionFactory.getCurrentSession();
+        List<Person> person = session.createQuery("from Person where email = :email", Person.class).setParameter("email", email).getResultList();
         return person.isEmpty() ? null : person.get(0);
     }
 
-    public Person loadByEmail(String email) {
-        return jdbcTemplate.query(
-                "SELECT * FROM People WHERE email = ?", new Object[]{email},
-                new BeanPropertyRowMapper<>(Person.class)
-        ).stream().findAny().orElse(null);
-    }
-
+    @Transactional
     public void delete(Integer id) {
         if (id == null) {
             return;
         }
-        jdbcTemplate.update("delete from People where id = ?", id);
+        Session session = sessionFactory.getCurrentSession();
+        Person personToBeDeleted = session.get(Person.class, id);
+        session.remove(personToBeDeleted);
     }
 
-    public void create(Person person) {
-        jdbcTemplate.update("insert into People (firstname, lastname, middlename, birthday, email, gender) values (?, ?, ?, ?, ?, ?)",
-                person.getFirstName(), person.getLastName(), person.getMiddleName(), person.getBirthday(), person.getEmail(), person.getGender());
-    }
-
-    public void update(Person person) {
-        jdbcTemplate.update("update People set firstname = ?, lastname = ?, middlename = ?, birthday = ?, email = ?, gender = ? where id = ?",
-                person.getFirstName(), person.getLastName(), person.getMiddleName(), person.getBirthday(), person.getEmail(), person.getGender(), person.getId());
+    @Transactional
+    public void createOrUpdate(Person person) {
+        Session session = sessionFactory.getCurrentSession();
+        person = (Person)session.merge(person);
+        session.persist(person);
     }
 }

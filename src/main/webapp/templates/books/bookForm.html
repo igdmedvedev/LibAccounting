@@ -40,7 +40,7 @@
             <select class="form-control" id="personId" name="personId">
                 <option>&lt;none&gt;</option>
                 <option th:each="person : ${people}" th:value="${person.getId}"
-                        th:text="${person.getFullName()}" th:selected="${book.getPersonId()}==${person.getId()}"></option>
+                        th:text="${person.getFullName()}" th:selected="${book.getPerson()}==${person}"></option>
             </select>
         </div>
 

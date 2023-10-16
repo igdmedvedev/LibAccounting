@@ -1,7 +1,7 @@
 create sequence person_seq
     as integer;
 
-create table People
+create table Person
 (
     id         integer
         constraint person_pk

@@ -1,46 +1,48 @@
 package com.springtest.crudrest.dao;
 
 import com.springtest.crudrest.models.Book;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Component
 public class BooksDao {
-    private final JdbcTemplate jdbcTemplate;
+    private final SessionFactory sessionFactory;
     @Autowired
-    public BooksDao(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public BooksDao(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
+
+    @Transactional(readOnly = true)
     public List<Book> collectBooks() {
-        return jdbcTemplate.query("SELECT * FROM Book", new BeanPropertyRowMapper<>(Book.class));
-    }
-    public List<Book> collectBooksByPerson(Integer personId) {
-        return jdbcTemplate.query("SELECT * FROM Book WHERE personId = ?", new Object[]{personId}, new BeanPropertyRowMapper<>(Book.class));
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery("from Book", Book.class).getResultList();
     }
 
+    @Transactional(readOnly = true)
     public Book loadByPk(Integer id) {
-        List<Book> book = jdbcTemplate.query("SELECT * FROM Book WHERE id = ?", new Object[]{id}, new BeanPropertyRowMapper<>(Book.class));
-        return book.isEmpty() ? null : book.get(0);
+        Session session = sessionFactory.getCurrentSession();
+        return session.get(Book.class, id);
     }
 
+    @Transactional
     public void delete(Integer id) {
         if (id == null) {
             return;
         }
-        jdbcTemplate.update("delete from Book where id = ?", id);
+        Session session = sessionFactory.getCurrentSession();
+        Book personToBeDeleted = session.get(Book.class, id);
+        session.remove(personToBeDeleted);
     }
 
-    public void create(Book book) {
-        jdbcTemplate.update("insert into Book (personId, name, authorName, year) values (?, ?, ?, ?)",
-                book.getPersonId(), book.getName(), book.getAuthorName(), book.getYear());
-    }
-
-    public void update(Book book) {
-        jdbcTemplate.update("update Book set personId = ?, name = ?, authorName = ?, year = ? where id = ?",
-                book.getPersonId(), book.getName(), book.getAuthorName(), book.getYear(), book.getId());
+    @Transactional
+    public void createOrUpdate(Book book) {
+        Session session = sessionFactory.getCurrentSession();
+        book = (Book)session.merge(book);
+        session.persist(book);
     }
 }

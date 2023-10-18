@@ -6,7 +6,7 @@ create table Person
     id         integer
         constraint person_pk
             primary key
-        default nextval('person_seq'),
+                                default nextval('person_seq'),
     firstName  varchar not null,
     middleName varchar,
     lastName   varchar not null,
@@ -25,12 +25,12 @@ create sequence book_seq
 
 create table Book
 (
-    id             integer
+    id         integer
         constraint book_pk
             primary key
         default nextval('book_seq'),
-    personId       integer references people (id),
-    name           varchar  not null,
+    personId   integer references person (id) on delete set null,
+    name       varchar  not null,
     authorName varchar  not null,
-    year           smallint not null
+    year       smallint not null
 );

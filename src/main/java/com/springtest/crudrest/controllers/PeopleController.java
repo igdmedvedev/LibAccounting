@@ -1,7 +1,7 @@
 package com.springtest.crudrest.controllers;
 
-import com.springtest.crudrest.dao.PeopleDao;
 import com.springtest.crudrest.models.Person;
+import com.springtest.crudrest.services.PeopleService;
 import com.springtest.crudrest.util.PersonValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,22 +13,22 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/people")
 public class PeopleController {
-    final private PeopleDao peopleDao;
+    final private PeopleService peopleService;
     final private PersonValidator personValidator;
     @Autowired
-    public PeopleController(PeopleDao peopleDao, PersonValidator personValidator) {
-        this.peopleDao = peopleDao;
+    public PeopleController(PeopleService peopleService, PersonValidator personValidator) {
+        this.peopleService = peopleService;
         this.personValidator = personValidator;
     }
     @GetMapping
     public String mainPage(Model model) {
-        model.addAttribute("people", peopleDao.collectPeople());
+        model.addAttribute("people", peopleService.collectPeople());
         return "people/index";
     }
 
     @GetMapping("/{id}")
     public String showPersonPage(Model model, @PathVariable("id") int id) {
-        Person person = peopleDao.loadByPk(id);
+        Person person = peopleService.loadByPk(id);
         if (person == null) {
             model.addAttribute("msg", "Reader not found. The link may be invalid.");
             return "notFoundPage";
@@ -38,7 +38,7 @@ public class PeopleController {
     }
     @GetMapping("/{id}/books")
     public String showPersonBooks(Model model, @PathVariable("id") int id) {
-        Person person = peopleDao.loadByPk(id, true);
+        Person person = peopleService.loadByPk(id, true);
         if (person == null) {
             model.addAttribute("msg", "Reader not found. The link may be invalid.");
             return "notFoundPage";
@@ -55,7 +55,7 @@ public class PeopleController {
 
     @GetMapping("/{id}/edit")
     public String changePersonForm(Model model, @PathVariable("id") int id) {
-        Person person = peopleDao.loadByPk(id);
+        Person person = peopleService.loadByPk(id);
         if (person == null) {
             model.addAttribute("msg", "Reader not found. The link may be invalid.");
             return "notFoundPage";
@@ -66,7 +66,7 @@ public class PeopleController {
 
     @DeleteMapping("/{id}")
     public String deletePerson(@PathVariable("id") int id){
-        peopleDao.delete(id);
+        peopleService.delete(id);
         return "redirect:/people";
     }
 
@@ -76,8 +76,9 @@ public class PeopleController {
         if (bindingResult.hasErrors()) {
             return "people/personForm";
         }
-        peopleDao.createOrUpdate(person);
-        return "redirect:/people/" + person.getId(); //нужно избавиться от конкатинации
+        peopleService.saveOrUpdate(person);
+        return "redirect:/people/" + person.getId();
+        //TODO: наверное стоит избавиться от конкатенации
     }
 
     @PostMapping
@@ -86,7 +87,7 @@ public class PeopleController {
         if (bindingResult.hasErrors()) {
             return "people/personForm";
         }
-        peopleDao.createOrUpdate(person);
-        return "redirect:/people/";
+        peopleService.saveOrUpdate(person);
+        return "redirect:/people";
     }
 }

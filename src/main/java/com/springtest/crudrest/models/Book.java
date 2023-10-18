@@ -1,10 +1,9 @@
 package com.springtest.crudrest.models;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "book")
@@ -46,6 +45,9 @@ public class Book {
     }
     public void setPerson(Person person) {
         this.person = person;
+    }
+    public Integer getPersonId() {
+        return person == null ? null : person.getId();
     }
 
     public String getAuthorName() {

@@ -1,7 +1,7 @@
 package com.springtest.crudrest.util;
 
-import com.springtest.crudrest.dao.PeopleDao;
 import com.springtest.crudrest.models.Person;
+import com.springtest.crudrest.services.PeopleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -9,10 +9,10 @@ import org.springframework.validation.Validator;
 
 @Component
 public class PersonValidator implements Validator {
-    private final PeopleDao peopleDao;
+    private final PeopleService peopleService;
     @Autowired
-    public PersonValidator(PeopleDao peopleDao) {
-        this.peopleDao = peopleDao;
+    public PersonValidator(PeopleService peopleService) {
+        this.peopleService = peopleService;
     }
 
     @Override
@@ -23,7 +23,7 @@ public class PersonValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         Person person = (Person)target;
-        Person findedPerson = peopleDao.loadByEmail(person.getEmail());
+        Person findedPerson = peopleService.loadByEmail(person.getEmail());
         if (findedPerson != null && !findedPerson.getId().equals(person.getId())) {
             errors.rejectValue("email", "", "Person with this email already exists");
         }

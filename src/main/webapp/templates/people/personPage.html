@@ -34,7 +34,7 @@
 
     <div class="form-group my-3">
         <label for="gender">Gender</label>
-        <input type="text" class="form-control" id="gender" th:value="${person.getGenderText()}" disabled>
+        <input type="text" class="form-control" id="gender" th:value="${person.getGender().getTitle()}" disabled>
     </div>
 
     <a type="submit" class="btn btn-primary" th:href="@{/people/{id}/books(id=${person.getId()})}">Reader's book list</a>

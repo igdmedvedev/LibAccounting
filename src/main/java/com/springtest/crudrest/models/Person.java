@@ -1,5 +1,6 @@
 package com.springtest.crudrest.models;
 
+import com.springtest.crudrest.converters.GendersConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -35,10 +36,10 @@ public class Person {
     @Email(message = "Email should be valid")
     @Column(name = "email")
     private String email;
-    @NotEmpty(message = "Gender should not be empty")
-    @Pattern(regexp = "[FM]", message = "Drop-down list \"Gender\" has errors")
+    @NotNull(message = "Gender should not be empty")
     @Column(name = "gender")
-    private String gender;
+    @Convert(converter = GendersConverter.class)
+    private Gender gender;
 
     @OneToMany(mappedBy = "person")
     private List<Book> books;
@@ -92,20 +93,17 @@ public class Person {
         this.email = email;
     }
 
-    public String getGender() {
-        return gender;
-    }
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-    public String getGenderText() {
-        return gender.equals("M") ? "Male" : "Female";
-    }
-
     public List<Book> getBooks() {
         return books;
     }
     public void setBooks(List<Book> books) {
         this.books = books;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+    public Gender getGender() {
+        return gender;
     }
 }

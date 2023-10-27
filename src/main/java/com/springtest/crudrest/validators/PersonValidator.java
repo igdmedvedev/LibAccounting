@@ -1,4 +1,4 @@
-package com.springtest.crudrest.util;
+package com.springtest.crudrest.validators;
 
 import com.springtest.crudrest.models.Person;
 import com.springtest.crudrest.services.PeopleService;

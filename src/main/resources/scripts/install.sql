@@ -14,8 +14,8 @@ create table Person
     email      varchar
         constraint email_uk
             unique     not null,
-    gender     char    not null,
-    createTime date    not null default now(),
+    gender     varchar    not null,
+    createTime date    not null default now()
     constraint check_gender
         check (gender = 'F' or gender = 'M')
 );

@@ -3,6 +3,8 @@ package com.springtest.crudrest.services;
 import com.springtest.crudrest.models.Book;
 import com.springtest.crudrest.repositories.BooksRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,8 +20,8 @@ public class BooksService {
         this.booksRepository = booksRepository;
     }
 
-    public List<Book> collectBooks() {
-        return booksRepository.findAll();
+    public List<Book> collectBooks(Integer page) {
+        return booksRepository.findAll(PageRequest.of(page, 6, Sort.by("authorName"))).getContent();
     }
     public Book loadByPk(Integer id) {
         return booksRepository.findById(id).orElse(null);

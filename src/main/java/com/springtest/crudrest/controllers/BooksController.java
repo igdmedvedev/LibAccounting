@@ -3,13 +3,16 @@ package com.springtest.crudrest.controllers;
 import com.springtest.crudrest.models.Book;
 import com.springtest.crudrest.services.BooksService;
 import com.springtest.crudrest.services.PeopleService;
-import com.springtest.crudrest.util.BooksValidator;
+import com.springtest.crudrest.validators.BooksValidator;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/books")
@@ -26,9 +29,17 @@ public class BooksController {
     }
 
     @GetMapping
-    public String mainPage(Model model) {
-        model.addAttribute("books", booksService.collectBooks());
+    public String mainPage(Model model, @RequestParam(required=false, name="page") Integer page) {
+        if (page == null || page < 1) {
+            page = 1;
+        }
+        List<Book> books = booksService.collectBooks(page - 1);
+        List<Book> booksOnNextPage = booksService.collectBooks(page);
+
+        model.addAttribute("books", books);
         model.addAttribute("title", "Book List");
+        model.addAttribute("prevPage", page - 1);
+        model.addAttribute("nextPage", booksOnNextPage == null || booksOnNextPage.isEmpty() ? 0 : page + 1);
         return "books/index";
     }
 
@@ -70,25 +81,30 @@ public class BooksController {
 
     @PatchMapping
     public String edit(@ModelAttribute("book") @Valid Book book, BindingResult bindingResult,
-                       @RequestParam("personId") Integer personId) {
+                       @RequestParam(required=false, name="personId") Integer personId) {
         bookValidator.validate(book, bindingResult);
         if (bindingResult.hasErrors()) {
             return "books/bookForm";
         }
-        book.setPerson(peopleService.loadByPk(personId));
+        if (personId != null) {
+            book.setPerson(peopleService.loadByPk(personId));
+        }
         booksService.saveOrUpdate(book);
         return "redirect:/books/" + book.getId();
         //TODO: наверное стоит избавиться от конкатенации
     }
 
+    //TODO: попробовать объединить post и patch методы
     @PostMapping
     public String create(@ModelAttribute("book") @Valid Book book, BindingResult bindingResult,
-                         @RequestParam("personId") Integer personId) {
+                         @RequestParam(required=false, name="personId") Integer personId) {
         bookValidator.validate(book, bindingResult);
         if (bindingResult.hasErrors()) {
             return "books/bookForm";
         }
-        book.setPerson(peopleService.loadByPk(personId));
+        if (personId != null) {
+            book.setPerson(peopleService.loadByPk(personId));
+        }
         booksService.saveOrUpdate(book);
         return "redirect:/books";
     }

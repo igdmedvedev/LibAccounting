@@ -9,9 +9,11 @@
 <body>
 <ul class="container justify-content-center">
     <div class="col justify-content-center list-group list-group-horizontal">
+        <a class="col-sm-2 list-group btn btn-primary mx-3 br-bottom-radius" th:classappend="${prevPage}==0 ? disabled : ''" th:href="@{/people?page={prevPage}(prevPage=${prevPage})}">Previous Page</a>
         <a class="col-sm-2 list-group btn btn-primary mx-3 br-bottom-radius" th:href="@{/people/new}">New reader</a>
         <a class="col-sm-2 list-group btn btn-primary mx-4 br-bottom-radius" th:href="@{/books}">Books</a>
         <a class="col-sm-2 list-group btn btn-primary mx-3 br-bottom-radius" th:href="@{/books/new}">New book</a>
+        <a class="col-sm-2 list-group btn btn-primary mx-3 br-bottom-radius" th:classappend="${nextPage}==0 ? disabled : ''" th:href="@{/people?page={nextPage}(nextPage=${nextPage})}">Next Page</a>
     </div>
     <div class="col justify-content-center list-group list-group-horizontal mt-4" th:each="person : ${people}">
         <a class="col-sm-6 list-group-item" th:href="@{/people/{id}(id=${person.getId()})}">

@@ -54,8 +54,9 @@
         <div class="form-group my-3">
             <label for="gender">Gender</label>
             <select class="form-control" id="gender" th:field="*{gender}">
-                <option th:value="'M'" th:text="Male"></option>
-                <option th:value="'F'" th:text="Female"></option>
+                <option th:each="genderOpt : ${T(com.springtest.crudrest.models.Gender).values()}"
+                        th:value="${genderOpt.getValue()}" th:text="${genderOpt.getTitle()}" >
+                </option>
             </select>
             <small class="form-text text-danger" th:if="${#fields.hasErrors('gender')}"
                    th:errors="*{gender}"></small>

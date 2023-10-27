@@ -3,6 +3,8 @@ package com.springtest.crudrest.services;
 import com.springtest.crudrest.models.Person;
 import com.springtest.crudrest.repositories.PeopleRepository;
 import org.hibernate.Hibernate;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,9 @@ public class PeopleService {
         this.peopleRepository = peopleRepository;
     }
 
+    public List<Person> collectPeople(Integer page) {
+        return peopleRepository.findAll(PageRequest.of(page, 6, Sort.by("lastName"))).getContent();
+    }
     public List<Person> collectPeople() {
         return peopleRepository.findAll();
     }

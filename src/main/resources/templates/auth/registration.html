@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign up</title>
+    <link href="/css/bootstrap.css" rel="stylesheet">
+</head>
+<body>
+<div class="container col-md-5">
+    <form class="align-self-center" th:method="POST" th:action="@{/auth/registration}" th:object="${librarian}">
+        <div class="form-group my-3">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" th:field="*{username}"/>
+            <small class="form-text text-danger" th:if="${#fields.hasErrors('username')}"
+                   th:errors="*{username}"></small>
+        </div>
+
+        <div class="form-group my-3">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" th:field="*{password}"/>
+            <small class="form-text text-danger" th:if="${#fields.hasErrors('password')}"
+                   th:errors="*{password}"></small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+</body>
+</html>

@@ -3,6 +3,7 @@ package com.springtest.crudrest.services;
 import com.springtest.crudrest.models.Person;
 import com.springtest.crudrest.repositories.PeopleRepository;
 import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.Optional;
 public class PeopleService {
     private final PeopleRepository peopleRepository;
 
+    @Autowired
     public PeopleService(PeopleRepository peopleRepository) {
         this.peopleRepository = peopleRepository;
     }

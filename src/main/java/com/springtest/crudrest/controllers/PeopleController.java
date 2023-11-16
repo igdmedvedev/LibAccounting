@@ -7,6 +7,8 @@ import com.springtest.crudrest.validators.PersonValidator;
 import com.sun.nio.sctp.PeerAddressChangeNotification;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,6 +37,7 @@ public class PeopleController {
         model.addAttribute("people", people);
         model.addAttribute("prevPage", page - 1);
         model.addAttribute("nextPage", peopleOnNextPage == null || peopleOnNextPage.isEmpty() ? 0 : page + 1);
+        model.addAttribute("isAdmin", userIsAdmin());
         return "people/index";
     }
 
@@ -59,6 +62,7 @@ public class PeopleController {
         model.addAttribute("title", "Book List by " + person.getFullName());
         model.addAttribute("prevPage", 0);
         model.addAttribute("nextPage", 0);
+        model.addAttribute("isAdmin", userIsAdmin());
         return "books/index";
     }
 
@@ -103,5 +107,12 @@ public class PeopleController {
         }
         peopleService.saveOrUpdate(person);
         return "redirect:/people";
+    }
+    private boolean userHasRole(String role) {
+        List<? extends GrantedAuthority> authority = (List<? extends GrantedAuthority>) SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        return authority != null && !authority.isEmpty() && authority.get(0).getAuthority().equals(role);
+    }
+    private boolean userIsAdmin() {
+        return userHasRole("ROLE_ADMIN");
     }
 }

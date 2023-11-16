@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "person")
 public class Person {
-    public Person(){}
+    public Person() {}
 
     @Id
     @Column(name = "id")

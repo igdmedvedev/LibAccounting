@@ -5,13 +5,15 @@ import com.springtest.crudrest.services.BooksService;
 import com.springtest.crudrest.services.PeopleService;
 import com.springtest.crudrest.validators.BooksValidator;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Null;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
 @Controller
@@ -40,6 +42,7 @@ public class BooksController {
         model.addAttribute("title", "Book List");
         model.addAttribute("prevPage", page - 1);
         model.addAttribute("nextPage", booksOnNextPage == null || booksOnNextPage.isEmpty() ? 0 : page + 1);
+        model.addAttribute("isAdmin", userIsAdmin());
         return "books/index";
     }
 
@@ -94,7 +97,6 @@ public class BooksController {
         //TODO: наверное стоит избавиться от конкатенации
     }
 
-    //TODO: попробовать объединить post и patch методы
     @PostMapping
     public String create(@ModelAttribute("book") @Valid Book book, BindingResult bindingResult,
                          @RequestParam(required=false, name="personId") Integer personId) {
@@ -107,5 +109,14 @@ public class BooksController {
         }
         booksService.saveOrUpdate(book);
         return "redirect:/books";
+    }
+
+    private boolean userHasRole(String role) {
+        List<? extends GrantedAuthority> authority = (List<? extends GrantedAuthority>) SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        return authority != null && !authority.isEmpty() && authority.get(0).getAuthority().equals(role);
+    }
+
+    private boolean userIsAdmin() {
+        return userHasRole("ROLE_ADMIN");
     }
 }

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title th:if="${person.getId()}==null">Create person</title>
+    <title th:if="${person.getId()}!=null">Editing person</title>
+    <link href="/css/bootstrap.css" rel="stylesheet">
+</head>
+<body>
+<div class="container col-md-5">
+    <form class="align-self-center" th:method="POST" th:action="@{/people}" th:object="${person}">
+        <input type="hidden" name="_method" value="patch" th:if="${person.getId()}!=null">
+        <input type="hidden" id="id" th:field="*{id}"/>
+
+        <div class="form-group my-3">
+            <label for="first-name">First Name</label>
+            <input type="text" class="form-control" id="first-name" placeholder="Enter first name"
+                   th:field="*{firstName}">
+            <small class="form-text text-danger" th:if="${#fields.hasErrors('firstName')}"
+                   th:errors="*{firstName}"></small>
+        </div>
+
+        <div class="form-group my-3">
+            <label for="middle-name">Middle Name</label>
+            <input type="text" class="form-control" id="middle-name" placeholder="Enter middle name"
+                   th:field="*{middleName}">
+            <small class="form-text text-danger" th:if="${#fields.hasErrors('middleName')}"
+                   th:errors="*{middleName}"></small>
+        </div>
+
+        <div class="form-group my-3">
+            <label for="last-name">Last Name</label>
+            <input type="text" class="form-control" id="last-name" placeholder="Enter last name"
+                   th:field="*{lastName}">
+            <small class="form-text text-danger" th:if="${#fields.hasErrors('lastName')}"
+                   th:errors="*{lastName}"></small>
+        </div>
+
+        <div class="form-group my-3">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" placeholder="Enter email"
+                   th:field="*{email}">
+            <small class="form-text text-danger" th:if="${#fields.hasErrors('email')}"
+                   th:errors="*{email}"></small>
+        </div>
+
+        <div class="form-group my-3">
+            <label for="birthday">Birthday</label>
+            <input type="date" class="form-control" id="birthday" th:field="*{birthday}">
+            <small class="form-text text-danger" th:if="${#fields.hasErrors('birthday')}"
+                   th:errors="*{birthday}"></small>
+        </div>
+
+        <div class="form-group my-3">
+            <label for="gender">Gender</label>
+            <select class="form-control" id="gender" th:field="*{gender}">
+                <option th:each="genderOpt : ${T(com.springtest.crudrest.models.Gender).values()}"
+                        th:value="${genderOpt.getValue()}" th:text="${genderOpt.getTitle()}" >
+                </option>
+            </select>
+            <small class="form-text text-danger" th:if="${#fields.hasErrors('gender')}"
+                   th:errors="*{gender}"></small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a type="submit" class="btn btn-secondary" th:href="@{/people}">Readers list</a>
+    </form>
+</div>
+</body>
+</html>

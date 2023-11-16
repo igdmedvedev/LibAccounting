@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${book.getName()}"></title>
+    <link href="/css/bootstrap.css" rel="stylesheet">
+</head>
+<body>
+<div class="container col-md-5 align-self-center" th:object="${book}">
+    <div class="form-group my-3">
+        <label for="name">Name</label>
+        <input type="text" class="form-control" id="name" th:field="*{name}" disabled>
+    </div>
+
+    <div class="form-group my-3">
+        <label for="author-name">Author name</label>
+        <input type="text" class="form-control" id="author-name" th:field="*{authorName}" disabled>
+    </div>
+
+    <div class="form-group my-3">
+        <label for="year">Year</label>
+        <input type="text" class="form-control" id="year" th:field="*{year}" disabled>
+    </div>
+
+    <div class="form-group my-3" th:if="${personName}!=null">
+        <label for="person">Reading</label>
+        <input type="text" class="form-control" id="person" th:value="${personName}" disabled>
+    </div>
+
+    <a class="btn btn-secondary" th:href="@{/books}">List of books</a>
+</div>
+</body>
+</html>

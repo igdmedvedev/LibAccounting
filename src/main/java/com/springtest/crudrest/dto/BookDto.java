@@ -1,32 +1,23 @@
-package com.springtest.crudrest.models;
+package com.springtest.crudrest.dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 
-@Entity
-@Table(name = "book")
-public class Book {
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class BookDto {
     private Integer id;
-    @Column(name = "name")
+
     @Size(min = 2, max = 50, message = "Book name should be between 2 and 50 characters")
     private String name;
-    @Column(name = "authorname")
+
     @Size(min = 2, max = 50, message = "Author name should be between 2 and 50 characters")
     private String authorName;
-    @Column(name = "year")
+
     @Min(value = -3000, message = "Year of writing should not be before than 3000 BC")
     @Max(value = 3000, message = "Year of writing should not be after than 3000 BC")
     private Integer year;
-    @ManyToOne
-    @JoinColumn(name = "personid", referencedColumnName = "id")
-    @JsonBackReference
-    private Person person;
+
+    private Integer personId;
 
     public Integer getId() {
         return id;
@@ -42,13 +33,6 @@ public class Book {
         this.name = name;
     }
 
-    public Person getPerson() {
-        return person;
-    }
-    public void setPerson(Person person) {
-        this.person = person;
-    }
-
     public String getAuthorName() {
         return authorName;
     }
@@ -61,5 +45,12 @@ public class Book {
     }
     public void setYear(Integer year) {
         this.year = year;
+    }
+
+    public Integer getPersonId() {
+        return personId;
+    }
+    public void setPersonId(Integer personId) {
+        this.personId = personId;
     }
 }

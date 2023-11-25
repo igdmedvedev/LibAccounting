@@ -3,7 +3,8 @@ package com.springtest.crudrest.controllers;
 import com.springtest.crudrest.models.Book;
 import com.springtest.crudrest.services.BooksService;
 import com.springtest.crudrest.services.PeopleService;
-import com.springtest.crudrest.validators.BooksValidator;
+import com.springtest.crudrest.utils.NotFoundException;
+import com.springtest.crudrest.validators.BookValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 
 @Controller
@@ -21,10 +21,10 @@ import java.util.List;
 public class BooksController {
     final private BooksService booksService;
     final private PeopleService peopleService;
-    BooksValidator bookValidator;
+    BookValidator bookValidator;
 
     @Autowired
-    public BooksController(BooksService booksService, BooksValidator bookValidator, PeopleService peopleService) {
+    public BooksController(BooksService booksService, BookValidator bookValidator, PeopleService peopleService) {
         this.booksService = booksService;
         this.bookValidator = bookValidator;
         this.peopleService = peopleService;
@@ -49,10 +49,6 @@ public class BooksController {
     @GetMapping("/{id}")
     public String showBookPage(Model model, @PathVariable("id") int id) {
         Book book = booksService.loadByPk(id);
-        if (book == null) {
-            model.addAttribute("msg", "Book not found. The link may be invalid.");
-            return "notFoundPage";
-        }
         model.addAttribute("book", book);
         model.addAttribute("personName", book.getPerson() != null ? peopleService.loadByPk(book.getPerson().getId()).getFullName() : null);
         return "books/bookPage";
@@ -67,10 +63,6 @@ public class BooksController {
     @GetMapping("/{id}/edit")
     public String changeBookForm(Model model, @PathVariable("id") int id) {
         Book book = booksService.loadByPk(id);
-        if (book == null) {
-            model.addAttribute("msg", "Book not found. The link may be invalid.");
-            return "notFoundPage";
-        }
         model.addAttribute("book", book);
         model.addAttribute("people", peopleService.collectPeople());
         return "books/bookForm";
@@ -118,5 +110,11 @@ public class BooksController {
 
     private boolean userIsAdmin() {
         return userHasRole("ROLE_ADMIN");
+    }
+
+    @ExceptionHandler
+    private String handleException(NotFoundException ex, Model model) {
+        model.addAttribute("msg", ex.getMessage() + "The link may be invalid.");
+        return "notFoundPage";
     }
 }

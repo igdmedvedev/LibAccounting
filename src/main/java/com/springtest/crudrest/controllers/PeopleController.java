@@ -1,10 +1,9 @@
 package com.springtest.crudrest.controllers;
 
-import com.springtest.crudrest.models.Book;
 import com.springtest.crudrest.models.Person;
 import com.springtest.crudrest.services.PeopleService;
+import com.springtest.crudrest.utils.NotFoundException;
 import com.springtest.crudrest.validators.PersonValidator;
-import com.sun.nio.sctp.PeerAddressChangeNotification;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -44,20 +43,12 @@ public class PeopleController {
     @GetMapping("/{id}")
     public String showPersonPage(Model model, @PathVariable("id") int id) {
         Person person = peopleService.loadByPk(id);
-        if (person == null) {
-            model.addAttribute("msg", "Reader not found. The link may be invalid.");
-            return "notFoundPage";
-        }
         model.addAttribute("person", person);
         return "people/personPage";
     }
     @GetMapping("/{id}/books")
     public String showPersonBooks(Model model, @PathVariable("id") int id) {
         Person person = peopleService.loadByPk(id, true);
-        if (person == null) {
-            model.addAttribute("msg", "Reader not found. The link may be invalid.");
-            return "notFoundPage";
-        }
         model.addAttribute("books", person.getBooks());
         model.addAttribute("title", "Book List by " + person.getFullName());
         model.addAttribute("prevPage", 0);
@@ -74,10 +65,6 @@ public class PeopleController {
     @GetMapping("/{id}/edit")
     public String changePersonForm(Model model, @PathVariable("id") int id) {
         Person person = peopleService.loadByPk(id);
-        if (person == null) {
-            model.addAttribute("msg", "Reader not found. The link may be invalid.");
-            return "notFoundPage";
-        }
         model.addAttribute("person", person);
         return "people/personForm";
     }
@@ -114,5 +101,11 @@ public class PeopleController {
     }
     private boolean userIsAdmin() {
         return userHasRole("ROLE_ADMIN");
+    }
+
+    @ExceptionHandler
+    private String handleException(NotFoundException ex, Model model) {
+        model.addAttribute("msg", ex.getMessage() + "The link may be invalid.");
+        return "notFoundPage";
     }
 }

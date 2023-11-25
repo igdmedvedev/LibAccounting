@@ -2,6 +2,7 @@ package com.springtest.crudrest.services;
 
 import com.springtest.crudrest.models.Person;
 import com.springtest.crudrest.repositories.PeopleRepository;
+import com.springtest.crudrest.utils.NotFoundException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -29,18 +30,19 @@ public class PeopleService {
         return peopleRepository.findAll();
     }
 
-    public Person loadByPk(Integer id) {
-        return peopleRepository.findById(id).orElse(null);
-    }
     public Person loadByPk(Integer id, boolean loadBooks) {
         Optional<Person> person = peopleRepository.findById(id);
         if (person.isEmpty()) {
-            return null;
+            throw new NotFoundException(String.format("Reader with id = %d wasn't found.", id));
         }
         if (loadBooks) {
             Hibernate.initialize(person.get().getBooks());
         }
         return person.get();
+    }
+
+    public Person loadByPk(Integer id) {
+        return loadByPk(id, false);
     }
 
     public Person loadByEmail(String email) {
@@ -58,5 +60,10 @@ public class PeopleService {
     @Transactional
     public void delete(Integer id) {
         peopleRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void delete(Person person) {
+        peopleRepository.delete(person);
     }
 }

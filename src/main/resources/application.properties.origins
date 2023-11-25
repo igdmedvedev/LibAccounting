@@ -7,3 +7,11 @@ spring.datasource.password=postgres
 # Configuration Hibernate
 spring.jpa.properties.hibenate.dialect=org.hibernate.dialect.PostgreSQLDialect
 spring.jpa.properties.hibenate.show_sql=true
+
+# For HTTP-methods PUT, PATCH, DELETE
+spring.mvc.hiddenmethod.filter.enabled=true
+
+#Autoupdate templates (if set to false template updates can be done on the fly by pressing Ctrl+F9)
+spring.thymeleaf.cache=true
+
+jwt_secret=secret

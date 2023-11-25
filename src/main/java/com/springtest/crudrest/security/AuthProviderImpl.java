@@ -1,5 +1,6 @@
 package com.springtest.crudrest.security;
 
+import com.springtest.crudrest.dto.AuthenticationDto;
 import com.springtest.crudrest.services.LibrarianDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -34,6 +35,13 @@ public class AuthProviderImpl implements AuthenticationProvider {
             throw new BadCredentialsException("Incorrect Password");
         }
         return new UsernamePasswordAuthenticationToken(librarianDetails, librarianDetails.getPassword(), Collections.emptyList());
+    }
+
+    public void checkAuthenticationElseThrow(AuthenticationDto authenticationDto) throws AuthenticationException {
+        UserDetails librarianDetails = librarianDetailService.loadUserByUsername(authenticationDto.getUsername());
+        if (!passwordEncoder.matches(authenticationDto.getPassword(), librarianDetails.getPassword())) {
+            throw new BadCredentialsException("Incorrect Password");
+        }
     }
 
     @Override

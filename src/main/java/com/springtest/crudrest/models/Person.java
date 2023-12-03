@@ -105,12 +105,14 @@ public class Person {
         return gender;
     }
 
-    @JsonIgnore
+
     public String getFormattedBirthday() {
+        //Used in templates
         return new SimpleDateFormat("dd MMMM yyyy").format(birthday.getTime());
     }
-    @JsonIgnore
+
     public String getFullName() {
+        //Used in templates
         return lastName + " " + firstName + (middleName == null ? "" : " " + middleName);
     }
 }

@@ -29,18 +29,14 @@ public class BooksRestController {
     final private BooksService booksService;
     final private BookDtoValidator bookValidator;
     private final ModelMapper modelMapper;
-    private final PeopleService peopleService;
-    private final JwtUtil jwtUtil;
 
 
     @Autowired
     public BooksRestController(BooksService booksService, BookDtoValidator bookValidator,
-                               ModelMapper modelMapper, PeopleService peopleService, JwtUtil jwtUtil) {
+                               ModelMapper modelMapper) {
         this.booksService = booksService;
         this.bookValidator = bookValidator;
         this.modelMapper = modelMapper;
-        this.peopleService = peopleService;
-        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping

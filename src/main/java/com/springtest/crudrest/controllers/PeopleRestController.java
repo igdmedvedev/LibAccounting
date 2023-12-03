@@ -28,7 +28,6 @@ public class PeopleRestController {
     final private PeopleService peopleService;
     final private PersonDtoValidator personValidator;
     private final ModelMapper modelMapper;
-    private final JwtUtil jwtUtil;
 
     @Autowired
     public PeopleRestController(PeopleService peopleService, PersonDtoValidator personValidator,
@@ -36,7 +35,6 @@ public class PeopleRestController {
         this.peopleService = peopleService;
         this.personValidator = personValidator;
         this.modelMapper = modelMapper;
-        this.jwtUtil = jwtUtil;
     }
     @GetMapping
     public List<PersonDto> collectPeople() {

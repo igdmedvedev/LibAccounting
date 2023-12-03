@@ -62,4 +62,9 @@ public class Book {
     public void setYear(Integer year) {
         this.year = year;
     }
+
+    public Integer getPersonId() {
+        //Used in templates
+        return person == null ? null : person.getId();
+    }
 }
